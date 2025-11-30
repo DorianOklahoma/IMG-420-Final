@@ -4,6 +4,7 @@ final/bin/
 final/*.gdextension.uid
 *.import
 *.tmp
+*.cs.uid
 
 .sconsign.dblite
 *.o
