@@ -17,17 +17,13 @@ void ProceduralGenerator2D::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_seed", "seed"), &ProceduralGenerator2D::set_seed);
     ClassDB::bind_method(D_METHOD("get_seed"), &ProceduralGenerator2D::get_seed);
 
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "tilemap_layer_node", PROPERTY_HINT_NODE_TYPE, "TileMapLayer"),
-                 "set_tilemap_node", "get_tilemap_node");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "tilemap_layer_node", PROPERTY_HINT_NODE_TYPE, "TileMapLayer"), "set_tilemap_node", "get_tilemap_node");
 
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "center_node", PROPERTY_HINT_NODE_TYPE, "Node2D"),
-                 "set_center_node", "get_center_node");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "center_node", PROPERTY_HINT_NODE_TYPE, "Node2D"), "set_center_node", "get_center_node");
 
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "generation_radius", PROPERTY_HINT_RANGE, "5,200"),
-                 "set_generation_radius", "get_generation_radius");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "generation_radius", PROPERTY_HINT_RANGE, "5,200"), "set_generation_radius", "get_generation_radius");
 
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "seed", PROPERTY_HINT_NONE),
-                 "set_seed", "get_seed");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "seed", PROPERTY_HINT_NONE), "set_seed", "get_seed");
 }
 
 ProceduralGenerator2D::ProceduralGenerator2D() {
@@ -43,14 +39,12 @@ void ProceduralGenerator2D::set_tilemap_node(Node *tilemap_layer_node) {
 Node *ProceduralGenerator2D::get_tilemap_node() const {
     return _tilemap_layer_node;
 }
-
 void ProceduralGenerator2D::set_center_node(Node *node) {
     _center_node = node;
 }
 Node *ProceduralGenerator2D::get_center_node() const {
     return _center_node;
 }
-
 void ProceduralGenerator2D::set_generation_radius(int radius) {
     _generation_radius = radius;
 }
@@ -66,7 +60,8 @@ int64_t ProceduralGenerator2D::get_seed() const {
 }
 
 
-void ProceduralGenerator2D::generate() {
+void ProceduralGenerator2D::generate()
+{
     if (!_tilemap_layer_node) {
         UtilityFunctions::print("ProceduralGenerator2D: No TileMapLayer assigned");
         return;
@@ -77,19 +72,22 @@ void ProceduralGenerator2D::generate() {
     }
 
     TileMapLayer *layer = Object::cast_to<TileMapLayer>(_tilemap_layer_node);
-    if (!layer) {
+    if (!layer)
+    {
         UtilityFunctions::print("ProceduralGenerator2D: Assigned node is not a TileMapLayer");
         return;
     }
 
-    // Convert world -> map cell
+    // Convert world to map cell
     Vector2 world_pos = Object::cast_to<Node2D>(_center_node)->get_global_position();
     Vector2i center_cell = layer->local_to_map(world_pos);
 
     // Clear existing used area
     Rect2i used = layer->get_used_rect();
-    for (int x = used.position.x; x < used.position.x + used.size.x; x++) {
-        for (int y = used.position.y; y < used.position.y + used.size.y; y++) {
+    for (int x = used.position.x; x < used.position.x + used.size.x; x++)
+    {
+        for (int y = used.position.y; y < used.position.y + used.size.y; y++)
+        {
             layer->set_cell(Vector2i(x, y), -1);
         }
     }
@@ -100,7 +98,8 @@ void ProceduralGenerator2D::generate() {
 }
 
 
-uint32_t ProceduralGenerator2D::position_rand(Vector2i pos, int index) const {
+uint32_t ProceduralGenerator2D::position_rand(Vector2i pos, int index) const
+{
     uint64_t v = (uint64_t(pos.x) * 73856093ULL)
                ^ (uint64_t(pos.y) * 19349663ULL)
                ^ (uint64_t(index) * 83492791ULL)
@@ -116,9 +115,12 @@ uint32_t ProceduralGenerator2D::position_rand(Vector2i pos, int index) const {
 }
 
 
-void ProceduralGenerator2D::generate_rooms(TileMapLayer *layer, const Vector2i &center_cell, int depth) {
+void ProceduralGenerator2D::generate_rooms(TileMapLayer *layer, const Vector2i &center_cell, int depth)
+{
     if (depth <= 0)
+    {
         return;
+    }
 
     int terrain_set = 0;
     int terrain_floor = 0;
@@ -128,8 +130,10 @@ void ProceduralGenerator2D::generate_rooms(TileMapLayer *layer, const Vector2i &
     int size = 3;
     Vector2i start = center_cell - Vector2i(size / 2, size / 2);
 
-    for (int x = 0; x < size; x++) {
-        for (int y = 0; y < size; y++) {
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
+        {
             room_cells.push_back(start + Vector2i(x, y));
         }
     }
@@ -140,7 +144,8 @@ void ProceduralGenerator2D::generate_rooms(TileMapLayer *layer, const Vector2i &
 }
 
 
-void ProceduralGenerator2D::generate_paths(TileMapLayer *layer, const Vector2i &center_cell, int depth) {
+void ProceduralGenerator2D::generate_paths(TileMapLayer *layer, const Vector2i &center_cell, int depth)
+{
     if (depth <= 0)
         return;
 
@@ -149,13 +154,15 @@ void ProceduralGenerator2D::generate_paths(TileMapLayer *layer, const Vector2i &
     Vector2i pos = center_cell;
     TypedArray<Vector2i> path_cells;
 
-    for (int i = 0; i < path_len; i++) {
+    for (int i = 0; i < path_len; i++)
+    {
 
         path_cells.push_back(pos);
 
         uint32_t r = position_rand(pos, i) % 4;
 
-        switch (r) {
+        switch (r)
+        {
             case 0: pos.x += 1; break;
             case 1: pos.x -= 1; break;
             case 2: pos.y += 1; break;
@@ -163,7 +170,7 @@ void ProceduralGenerator2D::generate_paths(TileMapLayer *layer, const Vector2i &
         }
 
         if ((pos - center_cell).length() > _generation_radius) {
-            pos = center_cell; // clamp to radius
+            pos = center_cell;
         }
     }
 
