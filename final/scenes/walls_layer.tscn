@@ -342,4 +342,5 @@ terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
 sources/0 = SubResource("TileSetAtlasSource_gqsxw")
 
 [node name="WallsLayer" type="TileMapLayer"]
+scale = Vector2(6, 6)
 tile_set = SubResource("TileSet_fmohu")

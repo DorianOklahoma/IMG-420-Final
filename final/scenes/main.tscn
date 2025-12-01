@@ -6,8 +6,6 @@
 
 [node name="main" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("1_0wfyh")]
-
 [node name="WallsLayer" parent="." instance=ExtResource("2_sugp2")]
 
 [node name="ProceduralGenerator2D" type="ProceduralGenerator2D" parent="." node_paths=PackedStringArray("tilemap_layer_node")]
@@ -16,3 +14,5 @@ tilemap_layer_node = NodePath("../WallsLayer")
 [node name="Wrapper" type="Node" parent="." node_paths=PackedStringArray("_generator")]
 script = ExtResource("3_sugp2")
 _generator = NodePath("../ProceduralGenerator2D")
+
+[node name="Player" parent="." instance=ExtResource("1_0wfyh")]
