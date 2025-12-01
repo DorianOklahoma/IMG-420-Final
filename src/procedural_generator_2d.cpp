@@ -51,7 +51,7 @@ void ProceduralGenerator2D::generate() {
 
     // Place ONE tile
     int tile_id = 0;
-    layer->set_cell(Vector2i(0, 0), tile_id);
+    layer->set_cell(Vector2i(0, 0), tile_id, Vector2i(0, 0));
 
     UtilityFunctions::print("ProceduralGenerator2D: placed single tile");
 }
