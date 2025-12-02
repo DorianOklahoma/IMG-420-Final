@@ -52,6 +52,7 @@ public:
 private:
     Node *_tilemap_layer_node = nullptr;
     Node *_center_node = nullptr;
+    Vector2i _player_start_cell;
 
     int _generation_radius = 5;
     int64_t _seed = 123456789;
