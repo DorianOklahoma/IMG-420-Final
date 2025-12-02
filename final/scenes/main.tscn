@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://cogols2sgmtx0" path="res://scenes/player.tscn" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://cupi58fyq7j4m" path="res://scenes/walls_layer.tscn" id="2_sugp2"]
-[ext_resource type="Script" uid="uid://c0vo3sbwqo0kt" path="res://scripts/Wrapper.cs" id="3_sugp2"]
-[ext_resource type="Script" uid="uid://n6c6awxkauvr" path="res://scripts/EnemySpawner.cs" id="4_jyhfs"]
+[ext_resource type="Script" uid="uid://dkvf8kedt42of" path="res://scripts/Wrapper.cs" id="3_sugp2"]
+[ext_resource type="Script" uid="uid://bfiwsj7n3w5sh" path="res://scripts/EnemySpawner.cs" id="4_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://b786wkeupd5mf" path="res://scenes/Enemy.tscn" id="5_tbgi4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sugp2"]
