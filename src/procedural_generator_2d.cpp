@@ -77,6 +77,9 @@ void ProceduralGenerator2D::generate()
     Vector2 local = layer->to_local(world);
     Vector2i cell = layer->local_to_map(local);
 
+    // --- Store player start cell so we can force a room around it ---
+    _player_start_cell = cell;
+
     schedule_chunks(layer, cell);
 
     if (!_chunk_queue.empty())
@@ -122,9 +125,30 @@ void ProceduralGenerator2D::generate_chunk(const ChunkCoord &coord)
     std::vector<Vector2i> room_centers;
     room_centers.reserve(room_count);
 
+    // --- Detect if this chunk contains the player start cell ---
+    bool is_player_chunk =
+        (coord.x * chunk_size <= _player_start_cell.x && _player_start_cell.x < (coord.x + 1) * chunk_size) &&
+        (coord.y * chunk_size <= _player_start_cell.y && _player_start_cell.y < (coord.y + 1) * chunk_size);
+
+    Vector2i forced_center = _player_start_cell;
+
     for (int i = 0; i < room_count; i++)
     {
-        Vector2i rp(origin.x + (position_rand(origin, i + 1) % chunk_size), origin.y + (position_rand(origin, i + 2) % chunk_size));
+        Vector2i rp;
+
+        if (i == 0 && is_player_chunk)
+        {
+            // --- Force first room to be centered on the player ---
+            rp = forced_center;
+        }
+        else
+        {
+            rp = Vector2i(
+                origin.x + (position_rand(origin, i + 1) % chunk_size),
+                origin.y + (position_rand(origin, i + 2) % chunk_size)
+            );
+        }
+
         room_centers.push_back(rp);
         auto shape = generate_room_shape(rp);
         stamp_cells(layer, shape);
@@ -140,7 +164,6 @@ std::vector<Vector2i> ProceduralGenerator2D::generate_room_shape(const Vector2i 
 {
     std::vector<Vector2i> cells;
 
-    // Room size (width x height)
     int w = 4 + (position_rand(center, 0) % 5);
     int h = 4 + (position_rand(center, 1) % 5);
 

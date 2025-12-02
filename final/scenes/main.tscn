@@ -11,7 +11,6 @@
 [node name="ProceduralGenerator2D" type="ProceduralGenerator2D" parent="." node_paths=PackedStringArray("tilemap_layer_node", "center_node")]
 tilemap_layer_node = NodePath("../WallsLayer")
 center_node = NodePath("../Player")
-seed = 123456791
 
 [node name="Wrapper" type="Node" parent="." node_paths=PackedStringArray("_generator")]
 script = ExtResource("3_sugp2")
