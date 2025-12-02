@@ -4,14 +4,27 @@
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/classes/node.hpp>
-#include <godot_cpp/classes/global_constants.hpp>
-#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
+#include <queue>
+#include <set>
+#include <vector>
+
 using namespace godot;
 
-class ProceduralGenerator2D : public Node2D {
+struct ChunkCoord
+{
+    int x;
+    int y;
+    bool operator<(const ChunkCoord &o) const
+    {
+        return (x == o.x) ? (y < o.y) : (x < o.x);
+    }
+};
+
+class ProceduralGenerator2D : public Node2D
+{
     GDCLASS(ProceduralGenerator2D, Node2D);
 
 protected:
@@ -22,8 +35,8 @@ public:
     ~ProceduralGenerator2D();
 
     void generate();
+    void generate_chunk(const ChunkCoord &chunk);
 
-    // Properties
     void set_tilemap_node(Node *tilemap_layer_node);
     Node *get_tilemap_node() const;
 
@@ -37,17 +50,24 @@ public:
     int64_t get_seed() const;
 
 private:
-    Node *_tilemap_layer_node;
-    Node *_center_node;
+    Node *_tilemap_layer_node = nullptr;
+    Node *_center_node = nullptr;
 
-    int _generation_radius = 20;
-    int64_t _seed = 123456789; // default seed
+    int _generation_radius = 5;
+    int64_t _seed = 123456789;
 
-    // PRNG helper that is deterministic per position
+    const int chunk_size = 16;
+
+    std::queue<ChunkCoord> _chunk_queue;
+    std::set<ChunkCoord> _generated_chunks;
+
     uint32_t position_rand(Vector2i pos, int index = 0) const;
 
-    void generate_paths(TileMapLayer *layer, const Vector2i &center_cell, int depth);
-    void generate_rooms(TileMapLayer *layer, const Vector2i &center_cell, int depth);
+    void schedule_chunks(TileMapLayer *layer, Vector2i center_cell);
+    
+    std::vector<Vector2i> generate_room_shape(const Vector2i &center_cell);
+    void stamp_cells(TileMapLayer *layer, const std::vector<Vector2i> &cells);
+    void carve_corridor(TileMapLayer *layer, Vector2i from, Vector2i to);
 };
 
-#endif // PROCEDURAL_GENERATOR_2D_H
+#endif
