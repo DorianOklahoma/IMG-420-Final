@@ -22,31 +22,39 @@ void ProceduralGenerator2D::_bind_methods() {
 ProceduralGenerator2D::ProceduralGenerator2D() {}
 ProceduralGenerator2D::~ProceduralGenerator2D() {}
 
-void ProceduralGenerator2D::set_tilemap_node(Node *tilemap_layer_node) {
+void ProceduralGenerator2D::set_tilemap_node(Node *tilemap_layer_node)
+{
     _tilemap_layer_node = tilemap_layer_node;
 }
-Node *ProceduralGenerator2D::get_tilemap_node() const {
+Node *ProceduralGenerator2D::get_tilemap_node() const
+{
     return _tilemap_layer_node;
 }
 
-void ProceduralGenerator2D::set_center_node(Node *node) {
+void ProceduralGenerator2D::set_center_node(Node *node)
+{
     _center_node = node;
 }
-Node *ProceduralGenerator2D::get_center_node() const {
+Node *ProceduralGenerator2D::get_center_node() const
+{
     return _center_node;
 }
 
-void ProceduralGenerator2D::set_generation_radius(int radius) {
+void ProceduralGenerator2D::set_generation_radius(int radius)
+{
     _generation_radius = radius;
 }
-int ProceduralGenerator2D::get_generation_radius() const {
+int ProceduralGenerator2D::get_generation_radius() const
+{
     return _generation_radius;
 }
 
-void ProceduralGenerator2D::set_seed(int64_t seed) {
+void ProceduralGenerator2D::set_seed(int64_t seed)
+{
     _seed = seed;
 }
-int64_t ProceduralGenerator2D::get_seed() const {
+int64_t ProceduralGenerator2D::get_seed() const
+{
     return _seed;
 }
 
@@ -77,7 +85,6 @@ void ProceduralGenerator2D::generate()
     Vector2 local = layer->to_local(world);
     Vector2i cell = layer->local_to_map(local);
 
-    // --- Store player start cell so we can force a room around it ---
     _player_start_cell = cell;
 
     schedule_chunks(layer, cell);
@@ -125,7 +132,6 @@ void ProceduralGenerator2D::generate_chunk(const ChunkCoord &coord)
     std::vector<Vector2i> room_centers;
     room_centers.reserve(room_count);
 
-    // --- Detect if this chunk contains the player start cell ---
     bool is_player_chunk =
         (coord.x * chunk_size <= _player_start_cell.x && _player_start_cell.x < (coord.x + 1) * chunk_size) &&
         (coord.y * chunk_size <= _player_start_cell.y && _player_start_cell.y < (coord.y + 1) * chunk_size);
@@ -138,7 +144,6 @@ void ProceduralGenerator2D::generate_chunk(const ChunkCoord &coord)
 
         if (i == 0 && is_player_chunk)
         {
-            // --- Force first room to be centered on the player ---
             rp = forced_center;
         }
         else

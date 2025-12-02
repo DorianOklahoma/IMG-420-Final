@@ -4,7 +4,7 @@ using System;
 public partial class Player : CharacterBody2D
 {
 	public const float Speed = 1000.0f;
-	public const float JumpVelocity = -400.0f;
+	[Export] private TileMapLayer tilemap;
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -26,5 +26,29 @@ public partial class Player : CharacterBody2D
 
 		Velocity = velocity;
 		MoveAndSlide();
+		
+		if (Input.IsActionJustPressed("interact"))
+		{
+			SetTileUnderPlayer();
+		}
+	}
+	
+	private void SetTileUnderPlayer()
+	{
+		Vector2 worldPos = GlobalPosition;
+		Vector2 localPos = tilemap.ToLocal(worldPos);
+		Vector2I tileCoords = tilemap.LocalToMap(localPos);
+		
+		Godot.Collections.Array<Vector2I> tileArray = new Godot.Collections.Array<Vector2I>();
+		for (int i = -1; i <= 1; i++) 
+		{
+			for (int j = -1; j <= 1; j++)
+			{
+				tileArray.Add(tileCoords + new Vector2I(i, j));
+			}
+		}
+		tileArray.Add(tileCoords);
+		
+		tilemap.SetCellsTerrainConnect(tileArray, 0, 0);
 	}
 }
