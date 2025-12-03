@@ -12,6 +12,8 @@ size = Vector2(50, 47)
 [node name="Enemy" type="CharacterBody2D"]
 platform_floor_layers = 4294967041
 script = ExtResource("1_55jtl")
+MoveSpeed = 100.0
+ChaseRange = 400.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(4.5, 1.90735e-06)
