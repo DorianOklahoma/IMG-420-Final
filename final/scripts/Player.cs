@@ -4,27 +4,119 @@ using System;
 public partial class Player : CharacterBody2D
 {
 	public const float Speed = 1000.0f;
-	public const float JumpVelocity = -400.0f;
+
+	[Export] private TileMapLayer tilemap;
+	[Export] public NodePath RestartMenuPath;
+
+	[Export] public int MaxLives = 3;
+	private int _currentLives;
+
+	private bool _gameStarted = false;
+
+	private bool _invincible = false;
+	private float _invincibilityTime = 3f;
+	private float _invincibilityTimer = 0f;
+
+	private RestartMenu _restartMenu;
+
+	public override void _Ready()
+	{
+		_currentLives = MaxLives;
+		SetProcess(false);
+		SetPhysicsProcess(false);
+
+		// Get restart menu
+		if (RestartMenuPath != null && !string.IsNullOrEmpty(RestartMenuPath))
+		{
+			_restartMenu = GetNode<RestartMenu>(RestartMenuPath);
+			if (_restartMenu != null)
+				_restartMenu.Visible = false;
+		}
+	}
+
+	public void StartGame()
+	{
+		_gameStarted = true;
+		SetProcess(true);
+		SetPhysicsProcess(true);
+
+		if (_restartMenu != null)
+			_restartMenu.Visible = false;
+	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Vector2 velocity = Velocity;
+		if (!_gameStarted) return;
 
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
+		if (_invincible)
+		{
+			_invincibilityTimer -= (float)delta;
+			if (_invincibilityTimer <= 0f)
+				_invincible = false;
+		}
+
+		Vector2 velocity = Velocity;
 		Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
-		if (direction != Vector2.Zero)
-		{
-			velocity.X = direction.X * Speed;
-			velocity.Y = direction.Y * Speed;
-		}
-		else
-		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
-		}
+		velocity.X = direction.X * Speed;
+		velocity.Y = direction.Y * Speed;
 
 		Velocity = velocity;
 		MoveAndSlide();
+
+		if (Input.IsActionJustPressed("interact"))
+			SetTileUnderPlayer();
 	}
+
+	private void SetTileUnderPlayer()
+	{
+		Vector2 worldPos = GlobalPosition;
+		Vector2 localPos = tilemap.ToLocal(worldPos);
+		Vector2I tileCoords = tilemap.LocalToMap(localPos);
+
+		Godot.Collections.Array<Vector2I> tileArray = new Godot.Collections.Array<Vector2I>();
+		for (int i = -1; i <= 1; i++)
+			for (int j = -1; j <= 1; j++)
+				tileArray.Add(tileCoords + new Vector2I(i, j));
+
+		tileArray.Add(tileCoords);
+		tilemap.SetCellsTerrainConnect(tileArray, 0, 0);
+	}
+
+	public void TakeDamage(int amount = 1)
+	{
+		if (_invincible) return;
+
+		_currentLives -= amount;
+		GD.Print($"[Player] Lives left: {_currentLives}");
+
+		_invincible = true;
+		_invincibilityTimer = _invincibilityTime;
+
+		if (_currentLives <= 0)
+		{
+			_gameStarted = false;
+			SetProcess(false);
+			SetPhysicsProcess(false);
+
+			if (_restartMenu != null)
+				_restartMenu.ShowMenu();
+		}
+	}
+
+	public void RestartGame(Vector2 startPosition)
+	{
+		_currentLives = MaxLives;
+		_invincible = false;
+		_invincibilityTimer = 0f;
+		GlobalPosition = startPosition;
+
+		_gameStarted = true;
+		SetProcess(true);
+		SetPhysicsProcess(true);
+
+		if (_restartMenu != null)
+			_restartMenu.Visible = false;
+			
+	}
+	public bool IsInvincible() => _invincible;
 }

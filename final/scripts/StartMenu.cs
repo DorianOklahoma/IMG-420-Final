@@ -1,0 +1,44 @@
+using Godot;
+using System;
+
+public partial class StartMenu : CanvasLayer
+{
+	[Export] private NodePath StartButtonPath;
+	[Export] private NodePath GameRootPath;      // Node2D root for the game
+	[Export] private NodePath PlayerPath;        // Player node
+	[Export] private NodePath EnemySpawnerPath;  // EnemySpawner node
+
+	private Button _startButton;
+	private Node2D _gameRoot;
+	private Player _player;
+	private EnemySpawner _spawner;
+
+	public override void _Ready()
+	{
+		_startButton = GetNode<Button>(StartButtonPath);
+		_gameRoot = GetNode<Node2D>(GameRootPath);
+
+		_player = GetNode<Player>(PlayerPath);
+		_spawner = GetNode<EnemySpawner>(EnemySpawnerPath);
+
+		_startButton.Pressed += OnStartButtonPressed;
+
+		// Hide the game initially
+		if (_gameRoot != null)
+			_gameRoot.Visible = false;
+	}
+
+	private void OnStartButtonPressed()
+	{
+		Visible = false; // hide menu
+
+		if (_gameRoot != null)
+			_gameRoot.Visible = true; // show game
+
+		GD.Print("Game started!");
+
+		// Start player and enemies
+		_player?.StartGame();
+		_spawner?.StartSpawner();
+	}
+}
