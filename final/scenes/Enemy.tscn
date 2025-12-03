@@ -1,20 +1,30 @@
-[gd_scene load_steps=4 format=3 uid="uid://b786wkeupd5mf"]
+[gd_scene load_steps=5 format=3 uid="uid://b786wkeupd5mf"]
 
 [ext_resource type="Script" uid="uid://3ndrux6fdxv4" path="res://scripts/Enemy.cs" id="1_55jtl"]
-[ext_resource type="Texture2D" uid="uid://dy51e66ow7d2f" path="res://assets/_e793f6e1-3031-4131-b8c5-fddce42cceaf.jpg" id="1_tt7e2"]
+[ext_resource type="Texture2D" uid="uid://dnjc1rikx0trt" path="res://assets/_e793f6e1-3031-4131-b8c5-fddce42cceaf-removebg-preview.png" id="2_55jtl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s7bn3"]
-size = Vector2(119, 125)
+size = Vector2(53, 52)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_55jtl"]
+size = Vector2(45, 41.5)
 
 [node name="Enemy" type="CharacterBody2D"]
 platform_floor_layers = 4294967041
+platform_wall_layers = 1
 script = ExtResource("1_55jtl")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(4.5, 1.90735e-06)
 scale = Vector2(0.118164, 0.123047)
-texture = ExtResource("1_tt7e2")
+texture = ExtResource("2_55jtl")
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(5.5, -1)
+shape = SubResource("RectangleShape2D_s7bn3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(4.5, -0.5)
-shape = SubResource("RectangleShape2D_s7bn3")
+position = Vector2(5, -2)
+shape = SubResource("RectangleShape2D_55jtl")
