@@ -7,17 +7,20 @@ public partial class Player : CharacterBody2D
 
 	[Export] private TileMapLayer tilemap;
 	[Export] public NodePath RestartMenuPath;
+	[Export] public NodePath TimerPath;
 
 	[Export] public int MaxLives = 3;
 	private int _currentLives;
 
 	private bool _gameStarted = false;
 
+	// Invincibility
 	private bool _invincible = false;
 	private float _invincibilityTime = 3f;
 	private float _invincibilityTimer = 0f;
 
 	private RestartMenu _restartMenu;
+	private TimerUI _timer;
 
 	public override void _Ready()
 	{
@@ -32,6 +35,14 @@ public partial class Player : CharacterBody2D
 			if (_restartMenu != null)
 				_restartMenu.Visible = false;
 		}
+
+		// Get TimerUI
+		if (TimerPath != null && !string.IsNullOrEmpty(TimerPath))
+		{
+			_timer = GetNode<TimerUI>(TimerPath);
+			if (_timer != null)
+				_timer.StopTimer(); // ensure timer doesn't start yet
+		}
 	}
 
 	public void StartGame()
@@ -42,12 +53,19 @@ public partial class Player : CharacterBody2D
 
 		if (_restartMenu != null)
 			_restartMenu.Visible = false;
+
+		if (_timer != null)
+		{
+			_timer.ResetTimer();
+			_timer.StartTimer();
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		if (!_gameStarted) return;
 
+		// Invincibility timer
 		if (_invincible)
 		{
 			_invincibilityTimer -= (float)delta;
@@ -55,6 +73,7 @@ public partial class Player : CharacterBody2D
 				_invincible = false;
 		}
 
+		// Movement
 		Vector2 velocity = Velocity;
 		Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		velocity.X = direction.X * Speed;
@@ -63,12 +82,15 @@ public partial class Player : CharacterBody2D
 		Velocity = velocity;
 		MoveAndSlide();
 
+		// Tile interaction
 		if (Input.IsActionJustPressed("interact"))
 			SetTileUnderPlayer();
 	}
 
 	private void SetTileUnderPlayer()
 	{
+		if (tilemap == null) return;
+
 		Vector2 worldPos = GlobalPosition;
 		Vector2 localPos = tilemap.ToLocal(worldPos);
 		Vector2I tileCoords = tilemap.LocalToMap(localPos);
@@ -94,12 +116,22 @@ public partial class Player : CharacterBody2D
 
 		if (_currentLives <= 0)
 		{
+			// Stop movement and game
 			_gameStarted = false;
 			SetProcess(false);
 			SetPhysicsProcess(false);
 
+			// Stop timer
+			if (_timer != null)
+				_timer.StopTimer();
+
+			// Show restart menu and send final time
 			if (_restartMenu != null)
+			{
 				_restartMenu.ShowMenu();
+				if (_timer != null)
+					_restartMenu.SetFinalTime(_timer.TimeElapsed); // property in TimerUI
+			}
 		}
 	}
 
@@ -114,9 +146,17 @@ public partial class Player : CharacterBody2D
 		SetProcess(true);
 		SetPhysicsProcess(true);
 
+		// Reset timer
+		if (_timer != null)
+		{
+			_timer.ResetTimer();
+			_timer.StartTimer();
+		}
+
 		if (_restartMenu != null)
 			_restartMenu.Visible = false;
-			
 	}
+
+	// Optional: check invincibility
 	public bool IsInvincible() => _invincible;
 }
