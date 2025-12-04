@@ -95,8 +95,11 @@ public partial class EnemySpawner : Node
 				float offsetX = GD.Randf() * SpawnCheckRadius * 2 - SpawnCheckRadius;
 				float offsetY = GD.Randf() * SpawnCheckRadius * 2 - SpawnCheckRadius;
 				Vector2 spawnPos = playerPos + new Vector2(offsetX, offsetY);
-
-				if (spawnPos.DistanceTo(playerPos) < MinDistanceFromPlayer)
+				Vector2I spawnCoords = new Vector2I((int)spawnPos.X, (int)spawnPos.Y);
+				
+				spawnCoords = spawnCoords/96;
+				
+				if (spawnPos.DistanceTo(playerPos) < MinDistanceFromPlayer || Tilemap.GetCellSourceId(spawnCoords) == -1)
 				{
 					retries++;
 					continue;
