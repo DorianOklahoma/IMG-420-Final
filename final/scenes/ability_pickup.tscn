@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://di8ol34rciqo3"]
+
+[ext_resource type="Script" uid="uid://bgkvwjdilti5o" path="res://scripts/AbilityPickup.cs" id="1_yv2bh"]
+[ext_resource type="Texture2D" uid="uid://by64o5n2j2ft2" path="res://assets/Copilot_20251204_063244.png" id="2_n31x4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i5xo1"]
+size = Vector2(27, 41)
+
+[node name="AbilityPickup" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_yv2bh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-3.5, -10.5)
+shape = SubResource("RectangleShape2D_i5xo1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-4, -12)
+scale = Vector2(0.0546875, 0.0471191)
+texture = ExtResource("2_n31x4")

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://7l5v0ie4h1an"]
+
+[ext_resource type="Script" uid="uid://c8leg77kgukos" path="res://scripts/LifePickup.cs" id="1_rafur"]
+[ext_resource type="Texture2D" uid="uid://ch47l67wrctmo" path="res://assets/heart.png" id="2_8ojex"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8ojex"]
+radius = 18.0
+height = 36.0
+
+[node name="LifePickup" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_rafur")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_8ojex")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0.249998, -0.437492)
+scale = Vector2(0.0522461, 0.0496826)
+texture = ExtResource("2_8ojex")

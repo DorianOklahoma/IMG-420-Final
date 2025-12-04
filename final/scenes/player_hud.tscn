@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://cggjnqtmfs7v5"]
+
+[ext_resource type="Script" uid="uid://dk88vl4mk2m21" path="res://scripts/PlayerHUD.cs" id="1_mlvnn"]
+
+[node name="PlayerHUD" type="Node2D" node_paths=PackedStringArray("LivesLabel", "AbilityLabel")]
+script = ExtResource("1_mlvnn")
+LivesLabel = NodePath("VBoxContainer/LivesLabel")
+AbilityLabel = NodePath("VBoxContainer/AbilityLabel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -25.0
+offset_right = 40.0
+offset_bottom = 25.0
+grow_vertical = 2
+alignment = 1
+
+[node name="LivesLabel" type="Label" parent="VBoxContainer"]
+modulate = Color(1, 0.117647, 1, 1)
+self_modulate = Color(1, 0.145098, 1, 1)
+layout_mode = 2
+
+[node name="AbilityLabel" type="Label" parent="VBoxContainer"]
+modulate = Color(1, 0.14902, 1, 1)
+self_modulate = Color(1, 0.0901961, 1, 1)
+layout_mode = 2

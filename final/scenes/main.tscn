@@ -1,32 +1,84 @@
-[gd_scene load_steps=7 format=3 uid="uid://bmllm36k80yd1"]
+[gd_scene load_steps=15 format=3 uid="uid://bmllm36k80yd1"]
 
-[ext_resource type="PackedScene" uid="uid://cogols2sgmtx0" path="res://scenes/player.tscn" id="1_0wfyh"]
-[ext_resource type="PackedScene" uid="uid://cupi58fyq7j4m" path="res://scenes/walls_layer.tscn" id="2_sugp2"]
-[ext_resource type="Script" uid="uid://dkvf8kedt42of" path="res://scripts/Wrapper.cs" id="3_sugp2"]
-[ext_resource type="Script" uid="uid://bfiwsj7n3w5sh" path="res://scripts/EnemySpawner.cs" id="4_jyhfs"]
-[ext_resource type="PackedScene" uid="uid://b786wkeupd5mf" path="res://scenes/Enemy.tscn" id="5_tbgi4"]
+[ext_resource type="Script" uid="uid://dfs4m7r4nf6a7" path="res://scripts/Main.cs" id="1_q8u5g"]
+[ext_resource type="PackedScene" uid="uid://cupi58fyq7j4m" path="res://scenes/walls_layer.tscn" id="2_lhr70"]
+[ext_resource type="Script" uid="uid://c0vo3sbwqo0kt" path="res://scripts/Wrapper.cs" id="3_wp0k4"]
+[ext_resource type="PackedScene" uid="uid://cogols2sgmtx0" path="res://scenes/player.tscn" id="4_bjd11"]
+[ext_resource type="Script" uid="uid://n6c6awxkauvr" path="res://scripts/EnemySpawner.cs" id="5_qmy6f"]
+[ext_resource type="PackedScene" uid="uid://duqrwrxdff5wk" path="res://scenes/Enemy.tscn" id="6_mwfav"]
+[ext_resource type="PackedScene" uid="uid://q13jkxdgku13" path="res://scenes/restart_menu.tscn" id="7_3p2gp"]
+[ext_resource type="PackedScene" uid="uid://gi3lkblwt8hh" path="res://scenes/start_menu.tscn" id="8_cvmbd"]
+[ext_resource type="Script" uid="uid://cx8gj747w7qnd" path="res://scripts/TimerUI.cs" id="9_ft6cd"]
+[ext_resource type="Script" uid="uid://dv1r86q0jfltl" path="res://scripts/ItemSpawner.cs" id="10_lhr70"]
+[ext_resource type="PackedScene" uid="uid://7l5v0ie4h1an" path="res://scenes/life_pickup.tscn" id="11_bjd11"]
+[ext_resource type="PackedScene" uid="uid://di8ol34rciqo3" path="res://scenes/ability_pickup.tscn" id="12_qmy6f"]
+[ext_resource type="PackedScene" uid="uid://cggjnqtmfs7v5" path="res://scenes/player_hud.tscn" id="13_qmy6f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sugp2"]
 size = Vector2(38, 38)
 
-[node name="main" type="Node2D"]
+[node name="Main" type="Node2D"]
+script = ExtResource("1_q8u5g")
+PlayerPath = NodePath("Player")
+EnemySpawnerPath = NodePath("EnemySpawner")
+RestartMenuPath = NodePath("RestartMenu")
+TimerUIPath = NodePath("TimerUI")
 
-[node name="WallsLayer" parent="." instance=ExtResource("2_sugp2")]
+[node name="WallsLayer" parent="." instance=ExtResource("2_lhr70")]
 
 [node name="ProceduralGenerator2D" type="ProceduralGenerator2D" parent="." node_paths=PackedStringArray("tilemap_layer_node", "center_node")]
 tilemap_layer_node = NodePath("../WallsLayer")
 center_node = NodePath("../Player")
 
-[node name="Wrapper" type="Node" parent="." node_paths=PackedStringArray("_generator")]
-script = ExtResource("3_sugp2")
+[node name="Wrapper" type="Node" parent="." node_paths=PackedStringArray("_generator", "_centerNode")]
+script = ExtResource("3_wp0k4")
 _generator = NodePath("../ProceduralGenerator2D")
+_centerNode = NodePath("..")
 
-[node name="Player" parent="." groups=["player"] instance=ExtResource("1_0wfyh")]
+[node name="Player" parent="." node_paths=PackedStringArray("tilemap") groups=["player"] instance=ExtResource("4_bjd11")]
+collision_mask = 3
+tilemap = NodePath("../WallsLayer")
+RestartMenuPath = NodePath("../RestartMenu")
+TimerPath = NodePath("../TimerUI")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("RectangleShape2D_sugp2")
 
-[node name="EnemySpawner" type="Node" parent="." node_paths=PackedStringArray("Player")]
-script = ExtResource("4_jyhfs")
-EnemyScene = ExtResource("5_tbgi4")
-Player = NodePath("../Player")
+[node name="EnemySpawner" type="Node" parent="." node_paths=PackedStringArray("Tilemap")]
+script = ExtResource("5_qmy6f")
+EnemyScene = ExtResource("6_mwfav")
+Tilemap = NodePath("../WallsLayer")
+PlayerPath = NodePath("../Player")
+
+[node name="RestartMenu" parent="." instance=ExtResource("7_3p2gp")]
+PlayerPath = NodePath("../Player")
+EnemySpawnerPath = NodePath("../EnemySpawner")
+FinalTimeLabelPath = NodePath("../TimerUI/TimerLabel")
+
+[node name="StartMenu" parent="." instance=ExtResource("8_cvmbd")]
+GameRootPath = NodePath("..")
+PlayerPath = NodePath("../Player")
+EnemySpawnerPath = NodePath("../EnemySpawner")
+TimerUIPath = NodePath("../TimerUI")
+
+[node name="TimerUI" type="CanvasLayer" parent="." node_paths=PackedStringArray("TimerLabel")]
+script = ExtResource("9_ft6cd")
+TimerLabel = NodePath("TimerLabel")
+
+[node name="TimerLabel" type="Label" parent="TimerUI"]
+modulate = Color(1, 0.0823529, 1, 1)
+self_modulate = Color(1, 0.0941176, 1, 1)
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ItemSpawner" type="Node2D" parent="."]
+script = ExtResource("10_lhr70")
+PlayerPath = NodePath("../Player")
+LifePickupScene = ExtResource("11_bjd11")
+AbilityPickupScene = ExtResource("12_qmy6f")
+SpawnRadius = 1000.0
+
+[node name="Items" type="Node2D" parent="ItemSpawner"]
+
+[node name="PlayerHUD" parent="." instance=ExtResource("13_qmy6f")]
+PlayerPath = NodePath("../Player")
