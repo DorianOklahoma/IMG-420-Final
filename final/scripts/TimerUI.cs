@@ -39,4 +39,10 @@ public partial class TimerUI : CanvasLayer
 		_timeElapsed = 0f;
 		UpdateLabel();
 	}
+
+	public void ResetAndStart()
+	{
+		ResetTimer();
+		StartTimer();
+	}
 }

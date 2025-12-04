@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bmllm36k80yd1"]
+[gd_scene load_steps=15 format=3 uid="uid://bmllm36k80yd1"]
 
 [ext_resource type="Script" uid="uid://dfs4m7r4nf6a7" path="res://scripts/Main.cs" id="1_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://cupi58fyq7j4m" path="res://scenes/walls_layer.tscn" id="2_lhr70"]
@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://q13jkxdgku13" path="res://scenes/restart_menu.tscn" id="7_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://gi3lkblwt8hh" path="res://scenes/start_menu.tscn" id="8_cvmbd"]
 [ext_resource type="Script" uid="uid://cx8gj747w7qnd" path="res://scripts/TimerUI.cs" id="9_ft6cd"]
+[ext_resource type="Script" uid="uid://dv1r86q0jfltl" path="res://scripts/ItemSpawner.cs" id="10_lhr70"]
+[ext_resource type="PackedScene" uid="uid://7l5v0ie4h1an" path="res://scenes/life_pickup.tscn" id="11_bjd11"]
+[ext_resource type="PackedScene" uid="uid://di8ol34rciqo3" path="res://scenes/ability_pickup.tscn" id="12_qmy6f"]
+[ext_resource type="PackedScene" uid="uid://cggjnqtmfs7v5" path="res://scenes/player_hud.tscn" id="13_qmy6f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sugp2"]
 size = Vector2(38, 38)
@@ -32,6 +36,7 @@ _generator = NodePath("../ProceduralGenerator2D")
 _centerNode = NodePath("..")
 
 [node name="Player" parent="." node_paths=PackedStringArray("tilemap") groups=["player"] instance=ExtResource("4_bjd11")]
+collision_mask = 3
 tilemap = NodePath("../WallsLayer")
 RestartMenuPath = NodePath("../RestartMenu")
 TimerPath = NodePath("../TimerUI")
@@ -54,6 +59,7 @@ FinalTimeLabelPath = NodePath("../TimerUI/TimerLabel")
 GameRootPath = NodePath("..")
 PlayerPath = NodePath("../Player")
 EnemySpawnerPath = NodePath("../EnemySpawner")
+TimerUIPath = NodePath("../TimerUI")
 
 [node name="TimerUI" type="CanvasLayer" parent="." node_paths=PackedStringArray("TimerLabel")]
 script = ExtResource("9_ft6cd")
@@ -64,3 +70,15 @@ modulate = Color(1, 0.0823529, 1, 1)
 self_modulate = Color(1, 0.0941176, 1, 1)
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="ItemSpawner" type="Node2D" parent="."]
+script = ExtResource("10_lhr70")
+PlayerPath = NodePath("../Player")
+LifePickupScene = ExtResource("11_bjd11")
+AbilityPickupScene = ExtResource("12_qmy6f")
+SpawnRadius = 1000.0
+
+[node name="Items" type="Node2D" parent="ItemSpawner"]
+
+[node name="PlayerHUD" parent="." instance=ExtResource("13_qmy6f")]
+PlayerPath = NodePath("../Player")

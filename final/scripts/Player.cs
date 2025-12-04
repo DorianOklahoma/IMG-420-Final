@@ -19,8 +19,22 @@ public partial class Player : CharacterBody2D
 	private float _invincibilityTime = 3f;
 	private float _invincibilityTimer = 0f;
 
+	// Ability
+	[Export] public int AbilityCharges = 0;
+	[Export] private NodePath AbilityAreaPath;
+	[Export] private float AbilityActiveTime = 0.15f;
+
+	private Area2D _abilityArea;
+	private CollisionShape2D _abilityShape;
+	private bool _abilityActive = false;
+	private float _abilityTimer = 0f;
+
 	private RestartMenu _restartMenu;
 	private TimerUI _timer;
+
+	public int CurrentLives => _currentLives;    // getter for pickups
+	public int MaxLivesPublic => MaxLives;       // getter for pickups
+
 
 	public override void _Ready()
 	{
@@ -28,7 +42,7 @@ public partial class Player : CharacterBody2D
 		SetProcess(false);
 		SetPhysicsProcess(false);
 
-		// Get restart menu
+		// Restart menu
 		if (RestartMenuPath != null && !string.IsNullOrEmpty(RestartMenuPath))
 		{
 			_restartMenu = GetNode<RestartMenu>(RestartMenuPath);
@@ -36,12 +50,27 @@ public partial class Player : CharacterBody2D
 				_restartMenu.Visible = false;
 		}
 
-		// Get TimerUI
+		// TimerUI
 		if (TimerPath != null && !string.IsNullOrEmpty(TimerPath))
 		{
 			_timer = GetNode<TimerUI>(TimerPath);
 			if (_timer != null)
-				_timer.StopTimer(); // ensure timer doesn't start yet
+				_timer.StopTimer();
+		}
+
+		// Ability Area
+		if (AbilityAreaPath != null && !string.IsNullOrEmpty(AbilityAreaPath))
+		{
+			_abilityArea = GetNode<Area2D>(AbilityAreaPath);
+			if (_abilityArea != null)
+			{
+				_abilityArea.Monitoring = false;
+				_abilityShape = _abilityArea.GetNode<CollisionShape2D>("CollisionShape2D");
+				if (_abilityShape != null)
+					_abilityShape.Disabled = true;
+
+				_abilityArea.BodyEntered += OnAbilityBodyEntered;
+			}
 		}
 	}
 
@@ -69,8 +98,22 @@ public partial class Player : CharacterBody2D
 		if (_invincible)
 		{
 			_invincibilityTimer -= (float)delta;
-			if (_invincibilityTimer <= 0f)
+			if (_invincible && _invincibilityTimer <= 0f)
 				_invincible = false;
+		}
+
+		// Ability timer
+		if (_abilityActive)
+		{
+			_abilityTimer -= (float)delta;
+			if (_abilityTimer <= 0f)
+			{
+				_abilityActive = false;
+				if (_abilityArea != null)
+					_abilityArea.Monitoring = false;
+				if (_abilityShape != null)
+					_abilityShape.Disabled = true;
+			}
 		}
 
 		// Movement
@@ -78,13 +121,17 @@ public partial class Player : CharacterBody2D
 		Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		velocity.X = direction.X * Speed;
 		velocity.Y = direction.Y * Speed;
-
 		Velocity = velocity;
 		MoveAndSlide();
 
-		// Tile interaction
+		// Tile / Ability interaction
 		if (Input.IsActionJustPressed("interact"))
-			SetTileUnderPlayer();
+		{
+			if (AbilityCharges > 0)
+				ActivateAbility();
+			else
+				SetTileUnderPlayer();
+		}
 	}
 
 	private void SetTileUnderPlayer()
@@ -104,33 +151,55 @@ public partial class Player : CharacterBody2D
 		tilemap.SetCellsTerrainConnect(tileArray, 0, 0);
 	}
 
+	private void ActivateAbility()
+	{
+		if (AbilityCharges <= 0) return;
+
+		AbilityCharges--;
+		GD.Print("[Player] Ability used! Charges left: " + AbilityCharges);
+
+		_abilityActive = true;
+		_abilityTimer = AbilityActiveTime;
+
+		if (_abilityArea != null)
+			_abilityArea.Monitoring = true;
+		if (_abilityShape != null)
+			_abilityShape.Disabled = false;
+	}
+
+	private void OnAbilityBodyEntered(Node body)
+	{
+		if (body is Enemy enemy)
+		{
+			enemy.QueueFree();
+			GD.Print("[Player] Enemy destroyed by ability!");
+		}
+	}
+
 	public void TakeDamage(int amount = 1)
 	{
 		if (_invincible) return;
 
 		_currentLives -= amount;
-		GD.Print($"[Player] Lives left: {_currentLives}");
+		GD.Print("[Player] Lives left: " + _currentLives);
 
 		_invincible = true;
 		_invincibilityTimer = _invincibilityTime;
 
 		if (_currentLives <= 0)
 		{
-			// Stop movement and game
 			_gameStarted = false;
 			SetProcess(false);
 			SetPhysicsProcess(false);
 
-			// Stop timer
 			if (_timer != null)
 				_timer.StopTimer();
 
-			// Show restart menu and send final time
 			if (_restartMenu != null)
 			{
 				_restartMenu.ShowMenu();
 				if (_timer != null)
-					_restartMenu.SetFinalTime(_timer.TimeElapsed); // property in TimerUI
+					_restartMenu.SetFinalTime(_timer.TimeElapsed);
 			}
 		}
 	}
@@ -146,7 +215,6 @@ public partial class Player : CharacterBody2D
 		SetProcess(true);
 		SetPhysicsProcess(true);
 
-		// Reset timer
 		if (_timer != null)
 		{
 			_timer.ResetTimer();
@@ -155,8 +223,27 @@ public partial class Player : CharacterBody2D
 
 		if (_restartMenu != null)
 			_restartMenu.Visible = false;
+
+		AbilityCharges = 0;
+
+		if (_abilityArea != null)
+			_abilityArea.Monitoring = false;
+		if (_abilityShape != null)
+			_abilityShape.Disabled = true;
 	}
 
-	// Optional: check invincibility
+	// Utility
 	public bool IsInvincible() => _invincible;
+
+	public void AddLife(int amount = 1)
+	{
+		_currentLives = Math.Min(_currentLives + amount, MaxLives);
+		GD.Print("[Player] Gained life. Current: " + _currentLives);
+	}
+
+	public void AddAbilityCharge(int amount = 1)
+	{
+		AbilityCharges += amount;
+		GD.Print("[Player] Gained ability charge. Current: " + AbilityCharges);
+	}
 }

@@ -29,8 +29,6 @@ public partial class Main : Node2D
 		if (_restartMenu != null)
 			_restartMenu.Visible = false;
 
-		// Start the game timer
-		_timerUI?.StartTimer();
 
 		// Connect restart button if needed
 		if (_restartMenu != null && _restartMenu.RestartButtonPath != null)
