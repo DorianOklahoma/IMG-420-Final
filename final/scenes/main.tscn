@@ -1,15 +1,15 @@
 [gd_scene load_steps=15 format=3 uid="uid://bmllm36k80yd1"]
 
-[ext_resource type="Script" uid="uid://dfs4m7r4nf6a7" path="res://scripts/Main.cs" id="1_q8u5g"]
+[ext_resource type="Script" uid="uid://n8civ62d1t6u" path="res://scripts/Main.cs" id="1_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://cupi58fyq7j4m" path="res://scenes/walls_layer.tscn" id="2_lhr70"]
-[ext_resource type="Script" uid="uid://c0vo3sbwqo0kt" path="res://scripts/Wrapper.cs" id="3_wp0k4"]
+[ext_resource type="Script" uid="uid://cjbbb2ccrkjdn" path="res://scripts/Wrapper.cs" id="3_wp0k4"]
 [ext_resource type="PackedScene" uid="uid://cogols2sgmtx0" path="res://scenes/player.tscn" id="4_bjd11"]
-[ext_resource type="Script" uid="uid://n6c6awxkauvr" path="res://scripts/EnemySpawner.cs" id="5_qmy6f"]
+[ext_resource type="Script" uid="uid://3o5w51ha44t0" path="res://scripts/EnemySpawner.cs" id="5_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://duqrwrxdff5wk" path="res://scenes/Enemy.tscn" id="6_mwfav"]
 [ext_resource type="PackedScene" uid="uid://q13jkxdgku13" path="res://scenes/restart_menu.tscn" id="7_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://gi3lkblwt8hh" path="res://scenes/start_menu.tscn" id="8_cvmbd"]
-[ext_resource type="Script" uid="uid://cx8gj747w7qnd" path="res://scripts/TimerUI.cs" id="9_ft6cd"]
-[ext_resource type="Script" uid="uid://dv1r86q0jfltl" path="res://scripts/ItemSpawner.cs" id="10_lhr70"]
+[ext_resource type="Script" uid="uid://xa6bkb2i3n7g" path="res://scripts/TimerUI.cs" id="9_ft6cd"]
+[ext_resource type="Script" uid="uid://cchupancuyb7x" path="res://scripts/ItemSpawner.cs" id="10_lhr70"]
 [ext_resource type="PackedScene" uid="uid://7l5v0ie4h1an" path="res://scenes/life_pickup.tscn" id="11_bjd11"]
 [ext_resource type="PackedScene" uid="uid://di8ol34rciqo3" path="res://scenes/ability_pickup.tscn" id="12_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://cggjnqtmfs7v5" path="res://scenes/player_hud.tscn" id="13_qmy6f"]
@@ -77,6 +77,7 @@ PlayerPath = NodePath("../Player")
 LifePickupScene = ExtResource("11_bjd11")
 AbilityPickupScene = ExtResource("12_qmy6f")
 SpawnRadius = 1000.0
+DespawnRadius = 2000.0
 
 [node name="Items" type="Node2D" parent="ItemSpawner"]
 
