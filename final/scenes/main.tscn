@@ -77,6 +77,7 @@ PlayerPath = NodePath("../Player")
 LifePickupScene = ExtResource("11_bjd11")
 AbilityPickupScene = ExtResource("12_qmy6f")
 SpawnRadius = 1000.0
+DespawnRadius = 2000.0
 
 [node name="Items" type="Node2D" parent="ItemSpawner"]
 
