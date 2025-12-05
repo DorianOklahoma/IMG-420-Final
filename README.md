@@ -1,10 +1,38 @@
-# IMG-420-Final
+# 2D Tiled Procedural Generator
 
-A Godot 4.4 project with a custom GDExtension for procedural tilemap generation.
+**Team:**
+Dorian Sanchez, Gareth Carew, Kristopher Thomas
 
 ---
 
-## Cloning the Repository
+## *Description*
+This Godot 4.4 extension is created for procedural generation. It generates an **infinitely expanding** scene around the player as they move.
+
+
+The extension adds a new node accessible in the Godot editor. The node exposes several configurable parameters:
+
+- A TileMapLayer node to generate on
+- A Node used as the player reference
+- An integer for the generation radius
+- An integer for the generation seed
+
+When run, the generator produces a **deterministic map** within a chunk-based radius around the player.
+
+---
+
+## *Features*
+
+- Deterministic generation
+- Infinite expansion
+- Load radius
+- Load center tracker
+- Changeable seeds
+
+---
+
+## *Installation and Build Instructions*
+
+### Cloning the Repository
 
 The repository includes a submodule (`godot-cpp`). To clone it correctly, use:
 
@@ -20,44 +48,74 @@ git submodule update --init --recursive
 
 ---
 
-## Building the Project
+### Building the Project
 
 After cloning, build the GDExtension by running SCons from the root of the repository:
 
-### macOS
+#### **macOS**
 ```
 scons platform=macos
 ```
 
-### Windows
+#### **Windows**
 ```
 scons platform=windows
 ```
 
-### Linux / Other
+#### **Linux / Other**
 ```
 scons platform=linux
 ```
 
-> The build output will be placed in `final/bin/`.
+ The build output will be placed in `final/bin/`.
 
 ---
 
-## Importing into Godot
+## *Running the Game*
 
-Once the build is complete:
+To play the game:
 
-1. Open Godot.
-2. Import the project by opening the `final/project.godot` file.
-3. The GDExtension (`procedural_generator`) will be ready to use in the project.
+1. In Godot, build the project using the **hammer** button.
+2. When the build completes, press the **play** button.
+3. Press the **Start** button to begin.
 
 ---
 
-## Modifying the Extension
+## *Controls and Gameplay*
 
-The extension source code is located in the `src/` folder.  
-You can:
+- **Arrow keys** — Move the player
+- **Space (no lightning bolt)** — Mine through walls
+- **Space (with lightning bolt)** — Kill enemies
 
-- Modify existing functionality.
-- Add new nodes or features.
-- Rebuild using SCons after making changes.
+Your goal is to survive as long as possible while avoiding enemies.
+
+---
+
+## *Known Issues*
+
+- Enemies sometimes spawn inside walls
+- The player can mine infinitely
+- Items sometimes despawn randomly
+
+---
+
+## *Future Improvements*
+
+- Ensure enemies spawn within valid map bounds
+- Add mining limiter
+- Add room-size parameter to the extension
+
+---
+
+## *Credits*
+
+- Godot documentation
+- https://benhoyt.com/writings/hash-table-in-c/
+
+- https://docs.godotengine.org/en/stable/classes/class_hashingcontext.htmlV
+
+---
+
+## *Demo Video Link*
+
+- youtube.com
