@@ -118,4 +118,4 @@ Your goal is to survive as long as possible while avoiding enemies.
 
 ## *Demo Video Link*
 
-- youtube.com
+- https://www.youtube.com/watch?v=2trI1V6c6eo
